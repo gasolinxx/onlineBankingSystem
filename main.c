@@ -17,23 +17,40 @@
 #include <string.h>
 #include <time.h>
 
-// Structure to store account information
-struct Account {
+#define MAX_ACCOUNTS 100
+#define MAX_USERNAME_LENGTH 50
+#define MAX_PASSWORD_LENGTH 50
+#define MAX_NAME_LENGTH 50
+#define MAX_PHONE_LENGTH 50
+#define MAX_ACCOUNTS 100
+
+
+
+struct BankAccount {
     int accountNumber;
-    char name[50];
-    char password[20];
-    int phoneNum;
     float balance;
-    struct address;
 };
 
-struct address {
-    int houseNum;
-    char street1[255];
-    char street2[255];
+struct BankAccount bankAccounts[MAX_ACCOUNTS];
+
+struct Address{
+  char address[50];
 };
 
-// Structure to create instance of a transaction
+
+struct User{
+    char name [MAX_NAME_LENGTH];
+    char phoneNum[MAX_PHONE_LENGTH];
+};
+
+struct Account {
+    char username[MAX_USERNAME_LENGTH];
+    char password[MAX_PASSWORD_LENGTH];
+    // Additional account information
+    struct User detail;
+    struct Address info;
+};
+
 struct Transaction {
     char date[20];
     int referenceNumber;
@@ -43,7 +60,7 @@ struct Transaction {
     char status[20];
 };
 
-// Structure for linked list node
+// Structure to create instance of a transaction
 struct TransactionNode {
     struct Transaction transaction;
     struct TransactionNode* next;
@@ -52,108 +69,57 @@ struct TransactionNode {
 // Global variable to track the head of the linked list
 struct TransactionNode* head = NULL;
 
-// Function prototypes
-void createAccount();
-void updateAccount();
-void deleteAccount();
-void userAuthentication();
-void deposit();
-void withdrawal();
-void fundTransfer();
-void billPayment();
-void checkBalance();
-void transactionHistory();
-void generateAccountStatement(long long int accountNumber);
-void searchReceipt();
-int generateReferenceNumber();
+struct Account accounts[MAX_ACCOUNTS];
+int numAccounts = 0;
+
+void injectFile();
+//void injectLinkedList();
 void storeTransaction(char* date, long long int accountNumber, char* transactionType, float amount, char* status);
 void retrieveTransactionsAndSort(long long int accountNumber);
+void transactionHistory();
+void generateAccountStatement(long long int accountNumber);
 
-int main() {
-    int choice;
 
-    while (1) {
-        printf("\n-------------------------\n");
-        printf("1. Create Account\n");
-        printf("2. Update Account\n");
-        printf("3. Delete Account\n");
-        printf("4. Deposit\n");
-        printf("5. Withdrawal\n");
-        printf("6. Fund Transfer\n");
-        printf("7. Bill Payment\n");
-        printf("8. Check Balance\n");
-        printf("9. Transaction History\n");
-        printf("10. Generate Account Statement\n");
-        printf("11. Search Receipt\n");
-        printf("0. Exit\n");
-        printf("-------------------------\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                createAccount();
-                break;
-            case 2:
-                updateAccount();
-                break;
-            case 3:
-                deleteAccount();
-                break;
-            case 4:
-                deposit();
-                break;
-            case 5:
-                withdrawal();
-                break;
-            case 6:
-                fundTransfer();
-                break;
-            case 7:
-                billPayment();
-                break;
-            case 8:
-                checkBalance();
-                break;
-            case 9:
-                transactionHistory();
-                break;
-            case 10:
-                generateAccountStatement(123456789012);
-                break;
-            case 11:
-                searchReceipt();
-                break;
-            case 0:
-                exit(0);
-            default:
-                printf("Invalid choice. Please try again.\n");
+void updateBalance(int accountNumber, float amount) {
+    // Search for the account in the bankAccounts array
+    for (int i = 0; i < MAX_ACCOUNTS; i++) {
+        if (bankAccounts[i].accountNumber == accountNumber) {
+            // Update the balance of the account
+            bankAccounts[i].balance += amount;
+            break;
         }
     }
-
-    return 0;
 }
 
-// Function 1: Account Management Functions
 
+
+
+// Function to create a new account
 void createAccount() {
-    // Implement the functionality to create a new user account
+    if (numAccounts >= MAX_ACCOUNTS) {
+        printf("Maximum number of accounts reached!\n");
+        return;
+    }
+
+    struct Account newAccount;
+    printf("Enter username: ");
+    scanf("%s", newAccount.username);
+    printf("Enter password: ");
+    scanf("%s", newAccount.password);
+    printf("Enter your name: ");
+    scanf("%s", newAccount.detail.name);
+    printf("Enter your phone number: ");
+    scanf("%s", newAccount.detail.phoneNum);
+    printf("Enter your address: ");
+    scanf("%s", newAccount.info.address);
+    // Additional input for account information if needed
+
+    accounts[numAccounts] = newAccount;
+    numAccounts++;
+    printf("Account created successfully!\n");
 }
 
-void updateAccount() {
-    // Implement the functionality to update user account details
-}
-
-void deleteAccount() {
-    // Implement the functionality to delete a user account
-}
-
-void userAuthentication() {
-    // Implement the functionality to authenticate a user
-}
-
-// Function 2: Transaction Functions
-
+//startttsadasd
 // Function to perform a deposit into a bank account
 void deposit() {
     int accountNumber;
@@ -191,6 +157,7 @@ void withdrawal() {
     printf("Account not found.\n");
 }
 
+
 // Function to perform fund transfer between bank accounts
 void fundTransfer() {
     int senderAccountNumber, recipientAccountNumber;
@@ -227,7 +194,6 @@ void fundTransfer() {
     }
 }
 
-
 // Function to perform bill payment from a bank account
 void billPayment() {
     int accountNumber;
@@ -241,75 +207,136 @@ void billPayment() {
     printf("Bill payment successful.\n");
 }
 
-// Function 3: Account Inquiry Functions
+//sadasdasdasd
 
-void checkBalance() {
-    int accountNumber;
-    printf("Enter your account number: ");
-    scanf("%d", &accountNumber);
 
-    //amri
-    // Implement the functionality to check the account balance
+
+
+// Function to update an existing account
+void updateAccount() {
+    char username[MAX_USERNAME_LENGTH];
+    printf("Enter username: ");
+    scanf("%s", username);
+
+    for (int i = 0; i < numAccounts; i++) {
+        if (strcmp(accounts[i].username, username) == 0) {
+            printf("Enter new password: ");
+            scanf("%s", accounts[i].password);
+            printf("Enter new phone number: ");
+            scanf("%s", accounts[i].detail.phoneNum);
+            printf("Enter new address: ");
+            scanf("%s", accounts[i].info.address);
+            // Additional updates for account information if needed
+
+            printf("Account updated successfully!\n");
+            return;
+        }
+    }
+
+    printf("Account not found!\n");
 }
 
-void transactionHistory() {
-    //amri
-    // Implement the functionality to display transaction history
+// Function to delete an existing account
+void deleteAccount() {
+    char username[MAX_USERNAME_LENGTH];
+    printf("Enter username: ");
+    scanf("%s", username);
 
-    // Temporary code to add a sample transaction **Please don't delete until checking with me - Habib
+    for (int i = 0; i < numAccounts; i++) {
+        if (strcmp(accounts[i].username, username) == 0) {
+            // Shift remaining accounts to fill the gap
+            for (int j = i; j < numAccounts - 1; j++) {
+                accounts[j] = accounts[j + 1];
+            }
+            numAccounts--;
+            printf("Account deleted successfully!\n");
+            return;
+        }
+    }
+
+    printf("Account not found!\n");
+}
+
+
+void displayInfo() {
+    char username[MAX_USERNAME_LENGTH];
+    printf("Enter username: ");
+    scanf("%s", username);
+
+    for (int i = 0; i < numAccounts; i++) {
+        if (strcmp(accounts[i].username, username) == 0) {
+            printf("\n--------User Information---------------\n");
+            printf("\nName = %s",accounts[i].detail.name);
+            printf("\nPhone Number = %s",accounts[i].detail.phoneNum);
+            printf("\nAddress = %s",accounts[i].info.address);
+
+            return;
+        }
+    }
+
+    printf("Account not found!\n");
+}
+
+
+
+// Function to authenticate a user
+int authenticate() {
+    char username[MAX_USERNAME_LENGTH];
+    char password[MAX_PASSWORD_LENGTH];
+    printf("Enter username: ");
+    scanf("%s", username);
+    printf("Enter password: ");
+    scanf("%s", password);
+
+    for (int i = 0; i < numAccounts; i++) {
+        if (strcmp(accounts[i].username, username) == 0 && strcmp(accounts[i].password, password) == 0) {
+            printf("Authentication successful!\n");
+            return 1;
+        }
+    }
+
+    printf("Authentication failed!\n");
+    return 0;
+}
+
+
+void injectFile() {
     char* date = "2023-06-17";
     long long int accountNumber = 123456789012;
     char* transactionType = "Fund";
-    float amount = 50.5;
+    float amount = 500.5;
     char* status = "Outgoing";
 
     storeTransaction(date, accountNumber, transactionType, amount, status);
-    retrieveTransactionsAndSort(accountNumber);
+    //retrieveTransactionsAndSort(accountNumber);
 
-}
+    date = "2023-06-18";
+    accountNumber = 123456789018;
+    transactionType = "Bill";
+    amount = 37.82;
+    status = "Outgoing";
 
-// Function 4: Statement Generation Functions
+    storeTransaction(date, accountNumber, transactionType, amount, status);
+    //retrieveTransactionsAndSort(accountNumber);
 
-void generateAccountStatement(long long int accountNumber) {
-    // Implement the functionality to generate an account statement
-    printf("Account Statement for Account Number: %lld\n", accountNumber);
-    printf("-----------------------------------------------------\n");
-    printf("Date\t\tReference\tType\tAmount\tStatus\n");
-    printf("-----------------------------------------------------\n");
+    date = "2023-06-20";
+    accountNumber = 123456789018;
+    transactionType = "Bill";
+    amount = 50.5;
+    status = "Outgoing";
 
-    retrieveTransactionsAndSort(accountNumber);
-}
+    storeTransaction(date, accountNumber, transactionType, amount, status);
+    //retrieveTransactionsAndSort(accountNumber);
 
-// Function 5: Print Receipt
+    date = "2023-06-18";
+    accountNumber = 123456789018;
+    transactionType = "Fund";
+    amount = 50.5;
+    status = "Outgoing";
 
-void searchReceipt() {
-    // Implement the functionality to search and display a receipt
-    int referenceNumber;
-    printf("Enter the reference number: ");
-    scanf("%d", &referenceNumber);
-
-    struct TransactionNode* current = head;
-    while (current != NULL) {
-        if (current->transaction.referenceNumber == referenceNumber) {
-            printf("Receipt Found:\n");
-            printf("-------------------------\n");
-            printf("Date: %s\n", current->transaction.date);
-            printf("Account Number: %lld\n", current->transaction.accountNumber);
-            printf("Transaction Type: %s\n", current->transaction.transactionType);
-            printf("Amount: %.2f\n", current->transaction.amount);
-            printf("Status: %s\n", current->transaction.status);
-            printf("-------------------------\n");
-            return;
-        }
-        current = current->next;
-    }
-
-    printf("Receipt not found.\n");
-}
-
-int generateReferenceNumber() {
-    srand(time(NULL));
-    return rand() % 90000 + 10000;
+    storeTransaction(date, accountNumber, transactionType, amount, status);
+    //retrieveTransactionsAndSort(accountNumber);
+    printf("\033[2J");
 }
 
 void storeTransaction(char* date, long long int accountNumber, char* transactionType, float amount, char* status) {
@@ -401,3 +428,140 @@ void retrieveTransactionsAndSort(long long int accountNumber) {
     // Free the temporary array
     free(transactions);
 }
+
+void searchReceipt() {
+    // Implement the functionality to search and display a receipt
+    int referenceNumber;
+    printf("Enter the reference number: ");
+    scanf("%d", &referenceNumber);
+
+    struct TransactionNode* current = head;
+    while (current != NULL) {
+        if (current->transaction.referenceNumber == referenceNumber) {
+            printf("Receipt Found:\n");
+            printf("-------------------------\n");
+            printf("Date: %s\n", current->transaction.date);
+            printf("Account Number: %lld\n", current->transaction.accountNumber);
+            printf("Transaction Type: %s\n", current->transaction.transactionType);
+            printf("Amount: %.2f\n", current->transaction.amount);
+            printf("Status: %s\n", current->transaction.status);
+            printf("-------------------------\n");
+            return;
+        }
+        current = current->next;
+    }
+
+    printf("Receipt not found.\n");
+}
+
+int generateReferenceNumber() {
+    srand(time(NULL));
+    return rand() % 90000 + 10000;
+}
+
+
+
+void transactionHistory() {
+    // Implement the functionality to display transaction history
+
+    // Temporary code to add a sample transaction **Please don't delete until checking with me - Habib
+    char* date = "2023-06-17";
+    long long int accountNumber = 123456789012;
+    char* transactionType = "Fund";
+    float amount = 50.5;
+    char* status = "Outgoing";
+
+    storeTransaction(date, accountNumber, transactionType, amount, status);
+    //retrieveTransactionsAndSort(accountNumber);
+
+}
+
+// Function 4: Statement Generation Functions
+
+void generateAccountStatement(long long int accountNumber) {
+    // Implement the functionality to generate an account statement
+    printf("Account Statement for Account Number: %lld\n", accountNumber);
+    printf("-----------------------------------------------------\n");
+    printf("Date\t\tReference\tType\tAmount\tStatus\n");
+    printf("-----------------------------------------------------\n");
+
+    retrieveTransactionsAndSort(accountNumber);
+}
+
+
+
+
+
+
+
+
+
+int main() {
+    int choice;
+    injectFile();
+
+    while (1) {
+        printf("\n---------------------\n");
+        printf("\nMenu");
+        printf("\n1. Create account\n");
+        printf("2. Update account\n");
+        printf("3. Delete account\n");
+        printf("4. Authenticate\n");
+        printf("5. Display Info\n"); //searching
+        printf("6. Display Transaction\n");
+        printf("7. Account Statement\n");
+        printf("8. Deposit\n");
+        printf("9. Withdrawal\n");
+        printf("10. Fund Transfer\n");
+        printf("11. Bill Payment\n");
+        printf("12. Exit\n");
+        printf("\n---------------------\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                createAccount();
+                break;
+            case 2:
+                updateAccount();
+                break;
+            case 3:
+                deleteAccount();
+                break;
+            case 4:
+                authenticate();
+                break;
+            case 5:
+                displayInfo();
+                break;
+            case 6:
+                transactionHistory();
+                break;
+             case 7:
+              generateAccountStatement(123456789012);
+                break;
+              case 8:
+                deposit();
+                break;
+            case 9:
+                withdrawal();
+                break;
+            case 10:
+                fundTransfer();
+                break;
+            case 11:
+                billPayment();
+                break;
+            case 12:
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("Invalid choice! Please try again.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
