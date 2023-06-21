@@ -154,20 +154,91 @@ void userAuthentication() {
 
 // Function 2: Transaction Functions
 
+// Function to perform a deposit into a bank account
 void deposit() {
-    // Implement the functionality to deposit funds into an account
+    int accountNumber;
+    float amount;
+    printf("Enter account number: ");
+    scanf("%d", &accountNumber);
+    printf("Enter deposit amount: ");
+    scanf("%f", &amount);
+
+    updateBalance(accountNumber, amount);
 }
 
+
+// Function to perform a withdrawal from a bank account
 void withdrawal() {
-    // Implement the functionality to withdraw funds from an account
+    int accountNumber;
+    float amount;
+    printf("Enter account number: ");
+    scanf("%d", &accountNumber);
+    printf("Enter withdrawal amount: ");
+    scanf("%f", &amount);
+
+    int i;
+    for (i = 0; i < numAccounts; i++) {
+        if (bankAccounts[i].accountNumber == accountNumber) {
+            if (bankAccounts[i].balance >= amount) {
+                bankAccounts[i].balance -= amount;
+                printf("Withdrawal successful.\n");
+            } else {
+                printf("Insufficient balance.\n");
+            }
+            return;
+        }
+    }
+    printf("Account not found.\n");
 }
 
+// Function to perform fund transfer between bank accounts
 void fundTransfer() {
-    // Implement the functionality to transfer funds between accounts
+    int senderAccountNumber, recipientAccountNumber;
+    float amount;
+    printf("Enter sender's account number: ");
+    scanf("%d", &senderAccountNumber);
+    printf("Enter recipient's account number: ");
+    scanf("%d", &recipientAccountNumber);
+    printf("Enter transfer amount: ");
+    scanf("%f", &amount);
+
+    int senderIndex = -1, recipientIndex = -1;
+    int i;
+    for (i = 0; i < numAccounts; i++) {
+        if (bankAccounts[i].accountNumber == senderAccountNumber) {
+            senderIndex = i;
+        }
+        if (bankAccounts[i].accountNumber == recipientAccountNumber) {
+            recipientIndex = i;
+        }
+    }
+
+    if (senderIndex == -1 || recipientIndex == -1) {
+        printf("One or both accounts not found.\n");
+        return;
+    }
+
+    if (bankAccounts[senderIndex].balance >= amount) {
+        bankAccounts[senderIndex].balance -= amount;
+        bankAccounts[recipientIndex].balance += amount;
+        printf("Transfer successful.\n");
+    } else {
+        printf("Insufficient balance.\n");
+    }
 }
 
+
+// Function to perform bill payment from a bank account
 void billPayment() {
-    // Implement the functionality to pay bills from an account
+    int accountNumber;
+    float amount;
+    printf("Enter account number: ");
+    scanf("%d", &accountNumber);
+    printf("Enter bill amount: ");
+    scanf("%f", &amount);
+
+    updateBalance(accountNumber, -amount);
+    printf("Bill payment successful.\n");
 }
 
 // Function 3: Account Inquiry Functions
